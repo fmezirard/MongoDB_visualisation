@@ -199,7 +199,7 @@ et votre requête MongoDB devra récupérer pour chacun de ces auteurs la liste 
 
 
 layout = Column(div, plot)
-
+output_file("page2.html")
 show(layout)
 
 
