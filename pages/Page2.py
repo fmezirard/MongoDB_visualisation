@@ -195,6 +195,10 @@ Le nombre d’auteurs présents dans la base étant très grand, vous vous focal
 et votre requête MongoDB devra récupérer pour chacun de ces auteurs la liste de ses publications 
 (la suite du traitement qui consiste à calculer le nombre d’articles commun par paire d’auteurs pourra être réalisée 
  dans votre script). </p>
+</br>
+
+<p> Retour à la page d'accueil : <a href="sommaire.html">ici</a></p>
+
 """)
 
 
