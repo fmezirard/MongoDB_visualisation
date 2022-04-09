@@ -1,0 +1,85 @@
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+  
+  <head>
+    
+      <meta charset="utf-8">
+      <title>Bokeh Plot</title>
+      
+      
+        
+          
+        
+        
+          
+        <script type="text/javascript" src="https://cdn.bokeh.org/bokeh/release/bokeh-2.4.1.min.js"></script>
+        <script type="text/javascript">
+            Bokeh.set_log_level("info");
+        </script>
+        
+      
+      
+    
+  </head>
+  
+  
+  <body>
+    
+      
+        
+          
+          
+            
+              <div class="bk-root" id="0273966c-cdcb-43f6-946c-65928da19e01" data-root-id="1328"></div>
+            
+          
+        
+      
+      
+        <script type="application/json" id="1625">
+          {"31b0419c-101b-43c4-ac83-ec16180a4290":{"defs":[],"roots":{"references":[{"attributes":{"coordinates":null,"group":null,"text":"R\u00e9seau entre les auteurs"},"id":"1331","type":"Title"},{"attributes":{},"id":"1375","type":"UnionRenderers"},{"attributes":{},"id":"1334","type":"ResetTool"},{"attributes":{"data":{"end":["Pontonnier","Guillemot","Dumont","Ferr\u00e9","Legeai","Olivier","Pacchierotti","Rubino","Bannier","L\u00e9cuyer","Lef\u00e8vre","Fromont","Martin","J\u00e9z\u00e9quel","Marchal","Giordano","Busnel","Pettr\u00e9","Gouranton","Pontonnier"],"start":["Maumet","Pontonnier","Pontonnier","Pontonnier","Pontonnier","Pontonnier","Pontonnier","Pontonnier","Pontonnier","Pontonnier","Pontonnier","Pontonnier","Pontonnier","Pontonnier","Pontonnier","Pontonnier","Pontonnier","Pontonnier","Pontonnier","Pontonnier"]},"selected":{"id":"1376"},"selection_policy":{"id":"1375"}},"id":"1344","type":"ColumnDataSource"},{"attributes":{"callback":null,"tooltips":[["auteur","@source"]]},"id":"1332","type":"HoverTool"},{"attributes":{"end":1.1,"start":-1.1},"id":"1326","type":"Range1d"},{"attributes":{"coordinates":null,"data_source":{"id":"1340"},"glyph":{"id":"1348"},"group":null,"hover_glyph":null,"view":{"id":"1342"}},"id":"1341","type":"GlyphRenderer"},{"attributes":{"coordinates":null,"data_source":{"id":"1344"},"glyph":{"id":"1353"},"group":null,"hover_glyph":null,"view":{"id":"1346"}},"id":"1345","type":"GlyphRenderer"},{"attributes":{"tools":[{"id":"1332"},{"id":"1333"},{"id":"1334"}]},"id":"1335","type":"Toolbar"},{"attributes":{"fill_color":{"value":"#2b83ba"},"size":{"value":15}},"id":"1348","type":"Circle"},{"attributes":{"overlay":{"id":"1372"}},"id":"1333","type":"BoxZoomTool"},{"attributes":{"coordinates":null,"edge_renderer":{"id":"1345"},"group":null,"inspection_policy":{"id":"1371"},"layout_provider":{"id":"1347"},"node_renderer":{"id":"1341"},"selection_policy":{"id":"1370"}},"id":"1338","type":"GraphRenderer"},{"attributes":{},"id":"1371","type":"NodesOnly"},{"attributes":{"end":1.1,"start":-1.1},"id":"1327","type":"Range1d"},{"attributes":{"data":{"index":["Maumet","Pontonnier","Guillemot","Dumont","Ferr\u00e9","Legeai","Olivier","Pacchierotti","Rubino","Bannier","L\u00e9cuyer","Lef\u00e8vre","Fromont","Martin","J\u00e9z\u00e9quel","Marchal","Giordano","Busnel","Pettr\u00e9","Gouranton"]},"selected":{"id":"1374"},"selection_policy":{"id":"1373"}},"id":"1340","type":"ColumnDataSource"},{"attributes":{},"id":"1374","type":"Selection"},{"attributes":{"source":{"id":"1340"}},"id":"1342","type":"CDSView"},{"attributes":{"source":{"id":"1344"}},"id":"1346","type":"CDSView"},{"attributes":{},"id":"1359","type":"LinearScale"},{"attributes":{},"id":"1358","type":"LinearScale"},{"attributes":{},"id":"1370","type":"NodesOnly"},{"attributes":{},"id":"1376","type":"Selection"},{"attributes":{"graph_layout":{"Bannier":[-0.2819422669146672,-0.9690804563612345],"Busnel":[0.9583145453692588,-0.38168238001469423],"Dumont":[-0.9710832507107579,0.34638156375039936],"Ferr\u00e9":[0.5461245211980572,-0.3555366456289956],"Fromont":[-1.0,-0.19258991654990645],"Giordano":[0.9242847880948862,0.033676083079358404],"Gouranton":[-0.6405902798593598,0.11024244149306386],"Guillemot":[0.23729684080821106,-0.9730867587168482],"J\u00e9z\u00e9quel":[-0.037106260071167546,-0.6480202951227373],"Lef\u00e8vre":[-0.613808666465075,0.5773630380755245],"Legeai":[0.3799740215541907,0.4622906046445121],"L\u00e9cuyer":[-0.11020475600831191,0.8790197669810205],"Marchal":[0.2537976874203818,0.9645008039907528],"Martin":[-0.6803008650562115,-0.7596056486317715],"Maumet":[0.6530977868504998,0.7764317982165718],"Olivier":[0.8871999620398202,0.4080732530916367],"Pacchierotti":[-0.4832676620557938,0.9078398631453938],"Pettr\u00e9":[-0.6471179074195645,-0.4040396549477664],"Pontonnier":[-0.003479011896716882,0.0008228948049346637],"Rubino":[0.6288107731223179,-0.7830003552992131]}},"id":"1347","type":"StaticLayoutProvider"},{"attributes":{"line_alpha":{"value":0.8},"line_color":{"field":"edge_color"}},"id":"1353","type":"MultiLine"},{"attributes":{"bottom_units":"screen","coordinates":null,"fill_alpha":0.5,"fill_color":"lightgrey","group":null,"left_units":"screen","level":"overlay","line_alpha":1.0,"line_color":"black","line_dash":[4,4],"line_width":2,"right_units":"screen","syncable":false,"top_units":"screen"},"id":"1372","type":"BoxAnnotation"},{"attributes":{},"id":"1373","type":"UnionRenderers"},{"attributes":{"height":400,"renderers":[{"id":"1338"}],"title":{"id":"1331"},"toolbar":{"id":"1335"},"width":400,"x_range":{"id":"1326"},"x_scale":{"id":"1358"},"y_range":{"id":"1327"},"y_scale":{"id":"1359"}},"id":"1328","type":"Plot"}],"root_ids":["1328"]},"title":"Bokeh Application","version":"2.4.1"}}
+        </script>
+        <script type="text/javascript">
+          (function() {
+            const fn = function() {
+              Bokeh.safely(function() {
+                (function(root) {
+                  function embed_document(root) {
+                    
+                  const docs_json = document.getElementById('1625').textContent;
+                  const render_items = [{"docid":"31b0419c-101b-43c4-ac83-ec16180a4290","root_ids":["1328"],"roots":{"1328":"0273966c-cdcb-43f6-946c-65928da19e01"}}];
+                  root.Bokeh.embed.embed_items(docs_json, render_items);
+                
+                  }
+                  if (root.Bokeh !== undefined) {
+                    embed_document(root);
+                  } else {
+                    let attempts = 0;
+                    const timer = setInterval(function(root) {
+                      if (root.Bokeh !== undefined) {
+                        clearInterval(timer);
+                        embed_document(root);
+                      } else {
+                        attempts++;
+                        if (attempts > 100) {
+                          clearInterval(timer);
+                          console.log("Bokeh: ERROR: Unable to run BokehJS code because BokehJS library is missing");
+                        }
+                      }
+                    }, 10, root)
+                  }
+                })(window);
+              });
+            };
+            if (document.readyState != "loading") fn();
+            else document.addEventListener("DOMContentLoaded", fn);
+          })();
+        </script>
+    
+  </body>
+  
+</html>
