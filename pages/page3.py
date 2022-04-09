@@ -48,4 +48,4 @@ Pour ce troisième exercice, vous êtes libres de visualiser les données conten
 layout = Column(div, plot)
 output_file("page3.html")
 
-show(plot)
+show(layout)
