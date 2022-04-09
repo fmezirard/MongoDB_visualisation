@@ -197,7 +197,7 @@ et votre requête MongoDB devra récupérer pour chacun de ces auteurs la liste 
  dans votre script). </p>
 </br>
 
-<p> Retour à la page d'accueil : <a href="sommaire.html">ici</a></p>
+<p> Retour à la page d'accueil : <a href="../sommaire.html">ici</a></p>
 
 """)
 
