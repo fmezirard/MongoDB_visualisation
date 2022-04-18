@@ -1,10 +1,11 @@
 from pymongo import MongoClient
 import networkx as nx
+import numpy as np
 import pandas as pd
 from bokeh.io import output_file, show
 from bokeh.models import (BoxZoomTool, Circle, HoverTool,
-                          MultiLine, Plot, Range1d, ResetTool, ColumnDataSource, Column, Div,Row)
-from bokeh.palettes import Blues8
+                          MultiLine,Plot, Range1d, ResetTool, ColumnDataSource, Column, Div,Row)
+from bokeh.palettes import Blues8, Spectral4
 from bokeh.plotting import from_networkx, figure
 from bokeh.transform import linear_cmap
 
@@ -43,33 +44,39 @@ for couple in listeauteurs:
     nomauteurs.append(couple["name"])
     prenomauteurs.append(couple["firstname"])
 
-print(nomauteurs)
-print(prenomauteurs)
-
 # Sélection des auteurs avec leurs publications
+# La requete ci-dessous est suffisante sur MongoDB mais ne nous permet pas
+# une récupération des valeurs dans la variable titre ...
+# nous utiliserons la requete 2
+# auteurspublications = coll.aggregate([
+#                         {"$unwind": "$authors"},
+#                         {"$match":{"authors.name": {"$in" : nomauteurs}, "authors.firstname": {"$in":prenomauteurs}}},
+#                         {"$group": {"_id": {"name": "$authors.name",
+#                                         "firstname": "$authors.firstname"},
+#                                     "titre": {"$push": "$title"}}}
+#                       ])          
+
 auteurspublications = coll.aggregate([
                         {"$unwind": "$authors"},
                         {"$match":{"authors.name": {"$in" : nomauteurs}, "authors.firstname": {"$in":prenomauteurs}}},
                         {"$group": {"_id": {"name": "$authors.name",
                                         "firstname": "$authors.firstname"},
-                                    "titre": {"$push": "$title"}}}
-                      ])                    
+                                    "titre": {"$push": "$title"}}},
+                        {"$group": {"_id": {"name": "$_id.name",
+                                        "firstname": "$_id.firstname",
+                                        "titre" : "$titre"}}}
+                      ])            
 
 # Récupération dans listes les noms des auteurs, leur prénom et leurs publications
 auteurs = [nom["_id"] for nom in auteurspublications]
-nomauteurs = []
-prenomauteurs = []
-for couple in auteurs:
-    nomauteurs.append(couple["name"])
-    prenomauteurs.append(couple["firstname"])
-
-publications = [nom["titre"] for nom in auteurspublications]
-print(publications)
-
 
 # Création d'un dataframe avec les noms, prénoms et liste de publications associés à chaque auteurs
-data = pd.DataFrame({"nomauteurs": nomauteurs, "prenomauteurs":prenomauteurs,"publications":publications})
-print(data)
+#data = pd.DataFrame(auteurs) 
+rows = []
+for data in auteurs:  
+    rows.append(data) 
+  
+df = pd.DataFrame(rows) 
 
 # Création d'une liste avec le nombre de publications associé à chaque auteur
 # Création d'une liste de publication commun entre deux auteurs
@@ -78,11 +85,11 @@ nbrepubli = []
 nbrepublicommun = []
 noeudcible = []
 noeudsource = []
-for source in data.nomauteurs:
-    publisource = list(data.publications[data.nomauteurs == source])[0]
+for source in df.name:
+    publisource = list(df.titre[df.name == source])[0]
 
-    for cible in data.nomauteurs:
-        publicible = list(data.publications[data.nomauteurs == cible])[0]
+    for cible in df.name:
+        publicible = list(df.titre[df.name == cible])[0]
         
         cmp = {}
         publitotale = publisource + publicible
@@ -96,7 +103,6 @@ for source in data.nomauteurs:
                 if compte != 1:
                     lstcompte.append(compte)
         commun = len(lstcompte)
-        
         
         # for elem in publitotale:
         #     cmp[elem] = cmp.get(elem,0) + 1
@@ -114,15 +120,19 @@ for source in data.nomauteurs:
         nbrepubli.append(len(publisource))
         
 # dataframe à utiliser pour le network
-datagraph = pd.DataFrame({"source": noeudsource, "target": noeudcible, "weight": nbrepublicommun, "node_size": nbrepubli})
-#datagraph = datagraphinitiale[datagraphinitiale.weight != 0]
+datagraphbis = pd.DataFrame({"source": noeudsource, "target": noeudcible, "weight": nbrepublicommun, "node_size": nbrepubli})
+
+# sélection des lignes où les individus ont un lien
+df_mask=datagraphbis['weight'] > 0
+datagraph = datagraphbis[df_mask]
 
 
-# Transformation du fataframe en reseau
+# Transformation du dataframe en reseau
 G = nx.from_pandas_edgelist(datagraph)
 # visualisation basique
-# nx.draw(G, with_labels=True, width=datagraph.weight)
-# nx.draw_circular(G, with_labels=True, width=datagraph.weight)
+nx.draw(G, with_labels=True, width=datagraph.weight)
+nx.draw_circular(G, with_labels=True, width=datagraph.weight)
+
 
 # Préparation des données
 auteurunique = datagraph.copy()
@@ -147,16 +157,10 @@ nx.set_node_attributes(G, name='adjusted_node_size', values=dico)
 
 # ajouter le dicoedges créé comme attribut du lien.
 nx.set_edge_attributes(G, name='weight', values=dicoedges)
-
-
-#Choose attributes from G network to size and color by — setting manual size (e.g. 10) or color (e.g. 'skyblue') also allowed
-#size_by_this_attribute = 'adjusted_node_size'
-#color_by_this_attribute = 'adjusted_node_size'
-#size_by_this_attribute_e = 'weight'
-
+    
 # Outils de survol sur les noueds
 HOVER_TOOLTIPS = [
-       ("Auteur", "@index"),
+        ("Auteur", "@index"),
         ("Nbre de publications", "@adjusted_node_size")
 ]
 
@@ -166,22 +170,17 @@ plot = figure(tooltips = HOVER_TOOLTIPS,
               x_range=Range1d(-12.1, 12.1), y_range=Range1d(-12.1, 12.1),title='Réseau des 20 auteurs les plus prolifiques et leurs interactions')
 
 # Création du network
-network_graph = from_networkx(G, nx.spring_layout, scale=10, center=(0, 0)) # nx.circular_layout
+network_graph = from_networkx(G, nx.circular_layout, scale=10, center=(0, 0)) #nx.spring_layout
 
 # Choix de la taille et couleur des noeuds en fonction du nombre de publications de l'auteur
 minimum_value_color = min(network_graph.node_renderer.data_source.data['adjusted_node_size'])
 maximum_value_color = max(network_graph.node_renderer.data_source.data['adjusted_node_size'])
 network_graph.node_renderer.glyph = Circle(size='adjusted_node_size', fill_color=linear_cmap('adjusted_node_size', Blues8, minimum_value_color, maximum_value_color))
 
-# Choix de la taille du lien en fonction de publications communes entre auteur
-#network_graph.edge_renderer.glyph = MultiLine(line_alpha=0.5, line_width='weight'*10)
-
-#network_graph.edge_renderer.data_source.data["line_width"] = [G.get_edge_data(a,b)['weight'] for a, b in G.edges()]
-#network_graph.edge_renderer.glyph.line_width = {'field': 'line_width'}
-
+# Taille des liens
+network_graph.edge_renderer.glyph = MultiLine(line_alpha=0.8, line_width='weight')
 
 plot.renderers.append(network_graph)
-
 
 #Ajout de code html
 div = Div(text="""
@@ -205,45 +204,6 @@ et votre requête MongoDB devra récupérer pour chacun de ces auteurs la liste 
 layout = Column(div, plot)
 output_file("page2.html")
 show(layout)
-
-
-
-
-
-
-
-
-
-
-
-
-
-# #Choose a title!
-# title = 'Réseau des 20 auteurs les plus prolifiques et leurs interactions'
-
-# #Establish which categories will appear when hovering over each node
-# HOVER_TOOLTIPS = [("Auteur", "@index")]
-
-# #Create a plot — set dimensions, toolbar, and title
-# plot = figure(tooltips = HOVER_TOOLTIPS,
-#               tools="pan,wheel_zoom,save,reset", active_scroll='wheel_zoom',
-#             x_range=Range1d(-10.1, 10.1), y_range=Range1d(-10.1, 10.1), title=title)
-
-# #Create a network graph object with spring layout
-# # https://networkx.github.io/documentation/networkx-1.9/reference/generated/networkx.drawing.layout.spring_layout.html
-# network_graph = from_networkx(G, nx.spring_layout, scale=10, center=(0, 0))
-
-# #Set node size and color
-# network_graph.node_renderer.glyph = Circle(size=15, fill_color='skyblue')
-
-# #Set edge opacity and width
-# network_graph.edge_renderer.glyph = MultiLine(line_alpha=0.5, line_width=1)
-
-# #Add network graph to the plot
-# plot.renderers.append(network_graph)
-
-# show(plot)
-# #save(plot, filename=f"{title}.html")
 
 
 

@@ -6,7 +6,7 @@ from bokeh.models import (BoxZoomTool, Circle, HoverTool,MultiLine, Plot, Range1
 from bokeh.palettes import Blues8
 from bokeh.plotting import figure
 from bokeh.transform import linear_cmap
-from bokeh.tile_providers import get_provider, Vendors, CARTODBPOSITRON
+from bokeh.tile_providers import get_provider, Vendors
 
 
 # NY food
@@ -19,98 +19,77 @@ db = client["food"]
 # sélection de la collection
 coll = db["NYfood"]
 
-# Sélection des coordonnées des restaurants
-coordonneesresto = coll.aggregate([
-                        {"$unwind": "$address"},
-                        {"$group": {"_id": {"iden":"$_id","coord": "$address.loc.coordinates"}}}
-])  
+# Requete MongoBD
+# Récupération pour chaque restaurant de
+# - son nom, sa cuisine, son quatier, ses coordonnees GPS
+# - les notes et la moyenne pour chaque note
 
-# Récupération des coordonnées
-lstcoordresto = [resto["_id"] for resto in coordonneesresto]
+# La première requete qui est en commentaire suffit normalement pour récupérer
+# les infos souhaitées. Cependant avec Spyder et VisualCode, il était IMPOSSIBLE
+# pour nous de récupérer les infos dans la variable "lst", pour détourner ce problème
+# nous avons tout regrouper avec la deuxième requete....
+ 
+# inforesto = coll.aggregate([
+#                         {"$unwind": "$grades"},
+#                         {"$group": {"_id": {"iden": "$_id",
+#                             "notes" : "$grades.grade",
+#                             "coord": "$address.loc.coordinates",
+#                             "borough": "$borough",
+#                             "name": "$name",
+#                             "cuisine": "$cuisine"},
+#                            "moy" : {"$avg": "$grades.score"} }},
+                           
+#                          {"$group": {"_id": {"iden": "$_id.iden",
+#                             "coord": "$_id.coord",
+#                             "borough": "$_id.borough",
+#                             "name": "$_id.name",
+#                             "cuisine": "$_id.cuisine"},
+                            
+#                             "lst": {"$push" : {"note":"$_id.notes","score":"$moy"}}
+#                         }} 
+# ])
 
-# Récupération des notes des resto
-notesresto = coll.aggregate([
+inforesto = coll.aggregate([
                         {"$unwind": "$grades"},
                         {"$group": {"_id": {"iden": "$_id",
-                                        "grades": "$grades.grade"},
-                                  "note_moy": {"$avg" : "$grades.score"}}
-                          }
+                            "notes" : "$grades.grade",
+                            "coord": "$address.loc.coordinates",
+                            "borough": "$borough",
+                            "name": "$name",
+                            "cuisine": "$cuisine"},
+                           "moy" : {"$avg": "$grades.score"} }},
+                           
+                         {"$group": {"_id": {"iden": "$_id.iden",
+                            "coord": "$_id.coord",
+                            "borough": "$_id.borough",
+                            "name": "$_id.name",
+                            "cuisine": "$_id.cuisine"},
+                            
+                            "lst": {"$push" : {"note":"$_id.notes","score":"$moy"}}
+                        }},
+                           
+                         {"$group": {"_id": {"iden": "$_id.iden",
+                            "coord": "$_id.coord",
+                            "borough": "$_id.borough",
+                            "name": "$_id.name",
+                            "cuisine": "$_id.cuisine",
+                             "lst" : "$lst"}}}  
                         ])
 
-# # Récupération des notes
-lstnotesresto = [resto["_id"] for resto in notesresto] #lst de dico
-lstnotes = [resto["note_moy"] for resto in notesresto] #lst de notes
+restodico = [resto["_id"] for resto in inforesto]
 
-# transformation de la liste de note en liste de dico
-diconote = {}
-lstnotesbis = []
-for note in lstnotes:
-    diconote["note"] = note
-    lstnotesbis.append(diconote)
-
-# Fusion des deux listes
-[lst1.update(lst2) for lst1, lst2 in zip(lstnotesresto, lstnotesbis)]
-
-# transformation des dictionnaires en liste
-ide = []
-note = []
-score = []
-coord = []
-for dico in lstnotesresto:
-    ide.append(dico["iden"])
-    note.append(dico["grades"])
-    score.append(dico["note"])
-    coord.append(dico["coord"])
-
-# Création d'un dataframe avec les identifiants, notes et scores moyens associé à chaque resto
-df = pd.DataFrame({"identifiant": ide, "note":note,"score":score, "coordonnees":coord})
-print(df)
-
-
-
-# # Récupération des informations associées aux resto:
-# inforesto = coll.find({},{"borough":1,"cuisine":1,"name":1})
-    
-# # Récupération des infos
-# lstinforesto = []
-# dicoresto = {}
-# for resto in inforesto:
-#     dicoresto["iden"] = resto["_id"]
-#     dicoresto["borough"] = resto["borough"]
-#     dicoresto["cuisine"] = resto["cuisine"]
-#     dicoresto["name"] = resto["name"]
-#     lstinforesto.append(dicoresto)
-
-# # Fusion des deux listes - stockage dans la liste lstinforesto
-# inforestocomplet = []
-# for dico1, dico2, in zip(lstinforesto, lstcoordresto):
-#     for d in (dico1, dico2):
-#         for key, value in d.items():
-#             dico[key]= value 
-            
-#             inforestocomplet.append(dico)
-# #[lst1.update(lst2) for lst1, lst2 in zip(lstinforesto, lstcoordresto)]
-# #inforestocomplet = {x['iden']:x for x in lstinforesto + lstcoordresto}.values()
-# #merge_lists_of_dicts(lstinforesto, lstcoordresto)
-# for d in (lstinforesto,lstcoordresto):
-#     print(d[0])
-#     for key, value in d.items():
-#         print(key)  
-    
-# transformation en dataframe
-# rows = [] 
+# Création d'un dataframe 
+rows = []
+for data in restodico:  
+    rows.append(data) 
   
-# for data in lstinforesto: 
-#     rows.append(data) 
-  
-# df = pd.DataFrame(rows)
-
+df = pd.DataFrame(rows) 
 
 
 # ajout d'une colonne latitude et d'une colonne longitude
 lat = []
 long = []
-for coor in df["coordonnees"]:
+for coor in df["coord"]:
     lat.append(coor[1])
     long.append(coor[0])
 df = df.assign(longitude=long, latitude=lat)
@@ -125,26 +104,23 @@ def coor_wgs84_to_web_mercator(lon, lat):
     return (x,y)
 
 new_lon, new_lat = coor_wgs84_to_web_mercator(df[['longitude']], df[['latitude']])
-df1 = pd.DataFrame()
-df1[['new_lon']] = new_lon
-df1[['new_lat']] = new_lat
+df[['new_lon']] = new_lon
+df[['new_lat']] = new_lat
 
 # Carte
-source1 = ColumnDataSource(df1)
+source1 = ColumnDataSource(df)
 
 plot = figure(#x_range = (-8400000, -8000000), y_range=(4800000, 5100000),
               x_axis_type="mercator", y_axis_type="mercator",
-              tools="pan,wheel_zoom,save,reset", active_scroll='wheel_zoom',
+              active_scroll='wheel_zoom', tools="pan,wheel_zoom,save,reset",
               title='Cartographie des restaurants de New-York')
 
-tile_provider = get_provider(CARTODBPOSITRON)
+tile_provider = get_provider(Vendors.CARTODBPOSITRON)
 plot.add_tile(tile_provider)
 
 plot.triangle(x='new_lon', y='new_lat', color='blue', source=source1)
 
-
-
-hover_tool = HoverTool(tooltips=[('Note', '@note'), ('score', '@score')])
+hover_tool = HoverTool(tooltips=[('Quartier', '@borough'),('Nom','@name'),("Cuisine",'@cuisine'),('Notes et sa moyenne', "@lst")]) 
 plot.add_tools(hover_tool)
 
 #Ajout de code html
@@ -158,10 +134,55 @@ Pour ce troisième exercice, vous êtes libres de visualiser les données conten
 
 """)
 
-
 layout = Column(div, plot)
 output_file("page3.html")
 
 show(layout)
 
 
+
+
+# MONGODB OK
+# db.getCollection('NYfood').aggregate([
+#                         {"$unwind": "$grades"},
+#                         {"$group": {"_id": {"iden": "$_id",
+#                                         "grades": "$grades.grade",
+#                             "coord": "$address.loc.coordinates",
+#                             "borough": "$borough",
+#                             "name": "$name",
+#                             "cuisine": "$cuisine"},
+#                                   "note_moy": {"$avg" : "$grades.score"}
+#                                   }}
+#                         ])
+
+
+# db.getCollection('NYfood').aggregate([
+#                         {"$unwind": "$grades"},
+#                         {"$group": {"_id": {"iden": "$_id",
+#                             "coord": "$address.loc.coordinates",
+#                             "borough": "$borough",
+#                             "name": "$name",
+#                             "cuisine": "$cuisine"},
+#                                   "lst_note": {"$push" : {"note":"$grades.grade","score":"$grades.score"}},
+#                                   }}
+#                         ])
+
+
+# db.getCollection('NYfood').aggregate([
+#                         {"$unwind": "$grades"},
+#                         {"$group": {"_id": {"iden": "$_id",
+#                             "notes" : "$grades.grade",
+#                             "coord": "$address.loc.coordinates",
+#                             "borough": "$borough",
+#                             "name": "$name",
+#                             "cuisine": "$cuisine"},
+#                             "moy" : {"$avg": "$grades.score"} }},
+                           
+#                           {"$group": {"_id": {"iden": "$_id.iden",
+#                             "coord": "$_id.coord",
+#                             "borough": "$_id.borough",
+#                             "name": "$_id.name",
+#                             "cuisine": "$_id.cuisine"},
+                            
+#                             "lst": {"$push" : {"note":"$_id.notes","score":"$moy"}}
+#                         }} 
