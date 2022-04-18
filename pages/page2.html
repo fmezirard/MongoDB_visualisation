@@ -1,0 +1,86 @@
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+  
+  <head>
+    
+      <meta charset="utf-8">
+      <title>Bokeh Plot</title>
+      
+      
+        
+          
+        
+        
+          
+        <script type="text/javascript" src="https://cdn.bokeh.org/bokeh/release/bokeh-2.4.1.min.js"></script>
+        <script type="text/javascript" src="https://cdn.bokeh.org/bokeh/release/bokeh-widgets-2.4.1.min.js"></script>
+        <script type="text/javascript">
+            Bokeh.set_log_level("info");
+        </script>
+        
+      
+      
+    
+  </head>
+  
+  
+  <body>
+    
+      
+        
+          
+          
+            
+              <div class="bk-root" id="5ed40aac-74bd-4055-b386-bdf770e292be" data-root-id="5364"></div>
+            
+          
+        
+      
+      
+        <script type="application/json" id="5629">
+          {"5be0b2da-eb3b-497c-883c-2bee5aad3d12":{"defs":[],"roots":{"references":[{"attributes":{"active_scroll":{"id":"5324"},"tools":[{"id":"5323"},{"id":"5324"},{"id":"5325"},{"id":"5326"},{"id":"5327"}]},"id":"5328","type":"Toolbar"},{"attributes":{},"id":"5316","type":"BasicTicker"},{"attributes":{"source":{"id":"5336"}},"id":"5338","type":"CDSView"},{"attributes":{"below":[{"id":"5315"}],"center":[{"id":"5318"},{"id":"5322"}],"left":[{"id":"5319"}],"renderers":[{"id":"5334"}],"title":{"id":"5307"},"toolbar":{"id":"5328"},"x_range":{"id":"5304"},"x_scale":{"id":"5311"},"y_range":{"id":"5305"},"y_scale":{"id":"5313"}},"id":"5306","subtype":"Figure","type":"Plot"},{"attributes":{},"id":"5313","type":"LinearScale"},{"attributes":{"children":[{"id":"5363"},{"id":"5306"}]},"id":"5364","type":"Column"},{"attributes":{"end":12.1,"start":-12.1},"id":"5304","type":"Range1d"},{"attributes":{},"id":"5374","type":"NodesOnly"},{"attributes":{},"id":"5323","type":"PanTool"},{"attributes":{"fill_color":{"field":"adjusted_node_size","transform":{"id":"5352"}},"size":{"field":"adjusted_node_size"}},"id":"5353","type":"Circle"},{"attributes":{"coordinates":null,"edge_renderer":{"id":"5341"},"group":null,"inspection_policy":{"id":"5375"},"layout_provider":{"id":"5343"},"node_renderer":{"id":"5337"},"selection_policy":{"id":"5374"}},"id":"5334","type":"GraphRenderer"},{"attributes":{"coordinates":null,"formatter":{"id":"5377"},"group":null,"major_label_policy":{"id":"5378"},"ticker":{"id":"5320"}},"id":"5319","type":"LinearAxis"},{"attributes":{"text":"\n&lt;h1&gt; R\u00e9seau de publications scientifiques &lt;/h1&gt;\n&lt;p&gt; La base publications contient les informations relatives aux publications de scientifiques du laboratoire IRISA \npour l\u2019ann\u00e9e 2021 (extraites du service HAL). Visualisez les liens entre les auteurs de ces publications, \nen utilisant un code couleur qui permette de distinguer les auteurs par leurs nombres de publications et \nen repr\u00e9sentant les liens (co-publications) existant entre les auteurs. \nLe nombre d\u2019auteurs pr\u00e9sents dans la base \u00e9tant tr\u00e8s grand, vous vous focaliserez sur les 20 auteurs les plus prolifiques \n(i.e. qui ont particip\u00e9 \u00e0 l\u2019\u00e9criture du plus grand nombre d\u2019articles) \net votre requ\u00eate MongoDB devra r\u00e9cup\u00e9rer pour chacun de ces auteurs la liste de ses publications \n(la suite du traitement qui consiste \u00e0 calculer le nombre d\u2019articles commun par paire d\u2019auteurs pourra \u00eatre r\u00e9alis\u00e9e \n dans votre script). &lt;/p&gt;\n&lt;/br&gt;\n\n&lt;p&gt; Retour \u00e0 la page d'accueil : &lt;a href=\"../sommaire.html\"&gt;ici&lt;/a&gt;&lt;/p&gt;\n\n"},"id":"5363","type":"Div"},{"attributes":{"end":12.1,"start":-12.1},"id":"5305","type":"Range1d"},{"attributes":{},"id":"5325","type":"SaveTool"},{"attributes":{"line_alpha":{"value":0.8},"line_width":{"field":"weight"}},"id":"5358","type":"MultiLine"},{"attributes":{"high":24,"low":5,"palette":["#084594","#2171b5","#4292c6","#6baed6","#9ecae1","#c6dbef","#deebf7","#f7fbff"]},"id":"5352","type":"LinearColorMapper"},{"attributes":{},"id":"5326","type":"ResetTool"},{"attributes":{"callback":null,"tooltips":[["Auteur","@index"],["Nbre de publications","@adjusted_node_size"]]},"id":"5327","type":"HoverTool"},{"attributes":{},"id":"5384","type":"UnionRenderers"},{"attributes":{"coordinates":null,"group":null,"text":"R\u00e9seau des 20 auteurs les plus prolifiques et leurs interactions"},"id":"5307","type":"Title"},{"attributes":{},"id":"5382","type":"UnionRenderers"},{"attributes":{"data":{"adjusted_node_size":[12,11,15,9,12,11,12,10,11,10,11,13,11,24,11,9,5,11,12,12],"index":["L\u00e9cuyer","Bannier","Pacchierotti","Gravier","Guillemot","Giordano","Fromont","Rubino","Maumet","Martin","Pettr\u00e9","Pontonnier","Olivier","Lef\u00e8vre","Dumont","Gouranton","Ferr\u00e9","Legeai","J\u00e9z\u00e9quel","Busnel"]},"selected":{"id":"5383"},"selection_policy":{"id":"5382"}},"id":"5336","type":"ColumnDataSource"},{"attributes":{},"id":"5385","type":"Selection"},{"attributes":{},"id":"5380","type":"BasicTickFormatter"},{"attributes":{},"id":"5377","type":"BasicTickFormatter"},{"attributes":{},"id":"5383","type":"Selection"},{"attributes":{},"id":"5375","type":"NodesOnly"},{"attributes":{},"id":"5311","type":"LinearScale"},{"attributes":{"axis":{"id":"5315"},"coordinates":null,"group":null,"ticker":null},"id":"5318","type":"Grid"},{"attributes":{},"id":"5324","type":"WheelZoomTool"},{"attributes":{"coordinates":null,"formatter":{"id":"5380"},"group":null,"major_label_policy":{"id":"5381"},"ticker":{"id":"5316"}},"id":"5315","type":"LinearAxis"},{"attributes":{"graph_layout":{"Bannier":[9.510565217825222,3.090170158993814],"Busnel":[9.510565217825222,-3.0901691775013846],"Dumont":[-3.0901708593483797,-9.510564428063697],"Ferr\u00e9":[3.0901711593557826,-9.510564428063697],"Fromont":[-3.0901702633019434,9.51056481350969],"Giordano":[-4.3612178183203964e-07,10.0],"Gouranton":[1.202408966979817e-07,-9.999999614554007],"Gravier":[5.877852327592731,8.090170062632316],"Guillemot":[3.090169669239692,9.510565409556126],"J\u00e9z\u00e9quel":[8.090169274854976,-5.8778527299240775],"Lef\u00e8vre":[-5.877850537469236,-8.090170869279197],"Legeai":[5.877850539453422,-8.090170869279197],"L\u00e9cuyer":[9.999999808269097,1.9272299651099908e-07],"Martin":[-9.5105646197946,3.0901704570170323],"Maumet":[-8.090170464963663,5.8778519232771975],"Olivier":[-8.09016927287079,-5.877853325970514],"Pacchierotti":[8.090169870901413,5.877852519323634],"Pettr\u00e9":[-9.99999980628491,-6.815047523753801e-07],"Pontonnier":[-9.510565215841037,-3.090169475524603],"Rubino":[-5.877851729562108,8.090170062632316]}},"id":"5343","type":"StaticLayoutProvider"},{"attributes":{},"id":"5381","type":"AllLabels"},{"attributes":{},"id":"5378","type":"AllLabels"},{"attributes":{"coordinates":null,"data_source":{"id":"5340"},"glyph":{"id":"5358"},"group":null,"hover_glyph":null,"view":{"id":"5342"}},"id":"5341","type":"GlyphRenderer"},{"attributes":{},"id":"5320","type":"BasicTicker"},{"attributes":{"source":{"id":"5340"}},"id":"5342","type":"CDSView"},{"attributes":{"axis":{"id":"5319"},"coordinates":null,"dimension":1,"group":null,"ticker":null},"id":"5322","type":"Grid"},{"attributes":{"coordinates":null,"data_source":{"id":"5336"},"glyph":{"id":"5353"},"group":null,"hover_glyph":null,"view":{"id":"5338"}},"id":"5337","type":"GlyphRenderer"},{"attributes":{"data":{"end":["L\u00e9cuyer","Bannier","Pacchierotti","Bannier","Maumet","Pettr\u00e9","Giordano","Olivier","Pacchierotti","Gravier","Guillemot","Giordano","Fromont","Guillemot","Giordano","Fromont","Giordano","Fromont","Lef\u00e8vre","Fromont","Rubino","Maumet","Martin","Pettr\u00e9","Pontonnier","Olivier","Pontonnier","Dumont","Olivier","Olivier","Lef\u00e8vre","Dumont","Gouranton","Ferr\u00e9","Legeai","J\u00e9z\u00e9quel","Busnel"],"start":["L\u00e9cuyer","L\u00e9cuyer","L\u00e9cuyer","Bannier","Bannier","Pacchierotti","Pacchierotti","Pacchierotti","Pacchierotti","Gravier","Gravier","Gravier","Gravier","Guillemot","Guillemot","Guillemot","Giordano","Giordano","Fromont","Fromont","Rubino","Maumet","Martin","Pettr\u00e9","Pettr\u00e9","Pettr\u00e9","Pontonnier","Pontonnier","Pontonnier","Olivier","Lef\u00e8vre","Dumont","Gouranton","Ferr\u00e9","Legeai","J\u00e9z\u00e9quel","Busnel"],"weight":[12,1,2,9,1,1,1,1,12,1,1,10,1,11,2,10,11,1,5,1,1,1,11,1,7,24,2,1,13,11,1,2,11,9,1,1,1]},"selected":{"id":"5385"},"selection_policy":{"id":"5384"}},"id":"5340","type":"ColumnDataSource"}],"root_ids":["5364"]},"title":"Bokeh Application","version":"2.4.1"}}
+        </script>
+        <script type="text/javascript">
+          (function() {
+            const fn = function() {
+              Bokeh.safely(function() {
+                (function(root) {
+                  function embed_document(root) {
+                    
+                  const docs_json = document.getElementById('5629').textContent;
+                  const render_items = [{"docid":"5be0b2da-eb3b-497c-883c-2bee5aad3d12","root_ids":["5364"],"roots":{"5364":"5ed40aac-74bd-4055-b386-bdf770e292be"}}];
+                  root.Bokeh.embed.embed_items(docs_json, render_items);
+                
+                  }
+                  if (root.Bokeh !== undefined) {
+                    embed_document(root);
+                  } else {
+                    let attempts = 0;
+                    const timer = setInterval(function(root) {
+                      if (root.Bokeh !== undefined) {
+                        clearInterval(timer);
+                        embed_document(root);
+                      } else {
+                        attempts++;
+                        if (attempts > 100) {
+                          clearInterval(timer);
+                          console.log("Bokeh: ERROR: Unable to run BokehJS code because BokehJS library is missing");
+                        }
+                      }
+                    }, 10, root)
+                  }
+                })(window);
+              });
+            };
+            if (document.readyState != "loading") fn();
+            else document.addEventListener("DOMContentLoaded", fn);
+          })();
+        </script>
+    
+  </body>
+  
+</html>
