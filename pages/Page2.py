@@ -52,7 +52,7 @@ auteurspublications = coll.aggregate([
                         {"$match":{"authors.name": {"$in" : nomauteurs}, "authors.firstname": {"$in":prenomauteurs}}},
                         {"$group": {"_id": {"name": "$authors.name",
                                         "firstname": "$authors.firstname"},
-                                    "essai": {"$push": "$title"}}}
+                                    "titre": {"$push": "$title"}}}
                       ])                    
 
 # Récupération dans listes les noms des auteurs, leur prénom et leurs publications
@@ -63,7 +63,7 @@ for couple in auteurs:
     nomauteurs.append(couple["name"])
     prenomauteurs.append(couple["firstname"])
 
-publications = [nom["essai"] for nom in auteurspublications]
+publications = [nom["titre"] for nom in auteurspublications]
 print(publications)
 
 
