@@ -3,4 +3,235 @@ title: "Centres de vaccination Covid19"
 output: html_notebook
 ---
 
-test
+# Base de données
+## Connexion à la base de données Doctolib
+```{r}
+library(mongolite)
+```
+
+```{r}
+coll <- mongo("dump_Jan2022", url =
+                "mongodb+srv://etudiant:ur2@clusterm1.0rm7t.mongodb.net/doctolib")
+
+```
+
+- centres de vaccination situés à moins de 50km de Rennes. 
+- L’icône associée à chaque centre sera de couleur rouge, orange ou vert selon le nombre de créneaux de vaccination ouverts 
+- sur la période du 26 au 29 janvier 2022 (inclus).
+
+
+
+### première requête : une ligne correpsond à un créneau
+
+Version MongoDB
+madate_inf = new Date("2022-01-26")
+madate_sup = new Date("2022-01-29")
+        
+db.dump_Jan2022.aggregate([ {$geoNear:{near: {"type": "Point", "coordinates": [-1.6833, 48.0833]},
+                                maxDistance: 50000,spherical: true, distanceField: "dist"}},
+                            {$unwind: "$visit_motives"},
+                            {$unwind: "$visit_motives.slots"},
+                            {$match: {"visit_motives.slots": {$gte: madate_inf,
+                                                              $lte: madate_sup}} }
+                            ])
+
+
+
+```{r}
+req='[{"$geoNear":{"near": {"type": "Point", "coordinates": [-1.6833, 48.0833]},
+                   "maxDistance": 50000, "spherical": "true", "distanceField": "dist"}},
+      {"$match" :{"visit_motives.slots": {"$gte": {"$date": "2022-01-26T00:00:00Z"}, 
+                                          "$lte": {"$date": "2022-01-29T00:00:00Z"}}}},
+      {"$unwind" : "$visit_motives"},
+      {"$unwind" : "$visit_motives.slots"}]'
+
+donnees <- coll$aggregate(pipeline = req)
+```
+
+
+### je groupe par centre de vaccination et je compte le nombre de créneaux ouverts
+madate_inf = new Date("2022-01-26")
+madate_sup = new Date("2022-01-29")
+        
+db.dump_Jan2022.aggregate([ {$geoNear:{near: {"type": "Point", "coordinates": [-1.6833, 48.0833]},
+                                maxDistance: 50000,spherical: true, distanceField: "dist"}},
+                            {$unwind: "$visit_motives"},
+                            {$unwind: "$visit_motives.slots"},
+                            {$match: {"visit_motives.slots": {$gte: madate_inf,
+                                                              $lte: madate_sup}}},
+                            {$group: {_id: {nom_centre:"$name", coord:"$location.coordinates"}, 
+                                     nb: {$sum: 1}}}
+                            ])
+```{r}
+req2='[{"$geoNear":{"near": {"type": "Point", "coordinates": [-1.6833, 48.0833]},
+                   "maxDistance": 50000, "spherical": "true", "distanceField": "dist"}},
+      {"$match" :{"visit_motives.slots": {"$gte": {"$date": "2022-01-26T00:00:00Z"}, 
+                                          "$lte": {"$date": "2022-01-29T00:00:00Z"}}}},
+      {"$unwind" : "$visit_motives"},
+      {"$unwind" : "$visit_motives.slots"},
+      {"$group": {"_id": {"nom_centre":"$name", "coord":"$location.coordinates"}, 
+                                    "nb": {"$sum": 1}}}]'
+
+donnees2 <- coll$aggregate(pipeline = req2)
+```
+
+
+
+
+
+
+### pour bonus, rajouter dans group :  type_dose:"$visit_motives.first_shot_motive"
+madate_inf = new Date("2022-01-01")
+madate_sup = new Date("2022-06-01")
+        
+db.dump_Jan2022.aggregate([ {$geoNear:{near: {"type": "Point", "coordinates": [-1.6833, 48.0833]},
+                                maxDistance: 50000,spherical: true, distanceField: "dist"}},
+                            {$unwind: "$visit_motives"},
+                            {$unwind: "$visit_motives.slots"},
+                            {$match: {"visit_motives.slots": {$gte: madate_inf,
+                                                              $lte: madate_sup}}},
+                            {$group: {_id: {nom_centre:"$name", coord:"$location.coordinates",type_dose:"$visit_motives.first_shot_motive"}, 
+                                     nb: {$sum: 1}}}
+                            ])
+             
+
+```{r}
+req3='[{"$geoNear":{"near": {"type": "Point", "coordinates": [-1.6833, 48.0833]},
+                   "maxDistance": 50000, "spherical": "true", "distanceField": "dist"}},
+      {"$match" :{"visit_motives.slots": {"$gte": {"$date": "2022-01-01T00:00:00Z"}, 
+                                          "$lte": {"$date": "2022-06-01T00:00:00Z"}}}},
+      {"$unwind" : "$visit_motives"},
+      {"$unwind" : "$visit_motives.slots"},
+      {"$group": {"_id": {"nom_centre":"$name", "coord":"$location.coordinates", "first_dose":"$visit_motives.first_shot_motive"}, 
+                                    "nb": {"$sum": 1}}}]'
+
+donnees3 <- coll$aggregate(pipeline = req3)
+```
+
+
+
+On traite le jeu de données
+```{r}
+library(tidyverse)
+```
+
+
+```{r}
+colnames(donnees2) <- c("id","Nombre_creneau")
+
+longitude=numeric(0)
+for(i in 1:nrow(donnees2)){
+  longitude=c(longitude,donnees2$id$coord[[i]][1])
+}
+
+latitude=numeric(0)
+for(i in 1:nrow(donnees2)){
+  latitude=c(latitude,donnees2$id$coord[[i]][2])
+}
+
+Nom_centre <- donnees2$id$nom_centre
+Nombre_creneau <- donnees2$Nombre_creneau
+
+
+#jeu de données final :
+covid <- tibble(Nom_centre,Nombre_creneau,longitude,latitude)
+
+```
+
+
+Jeu de données pour le bonus :
+```{r}
+colnames(donnees3) <- c("id","Nombre_creneau")
+
+longitude=numeric(0)
+for(i in 1:nrow(donnees3)){
+  longitude=c(longitude,donnees3$id$coord[[i]][1])
+}
+
+latitude=numeric(0)
+for(i in 1:nrow(donnees3)){
+  latitude=c(latitude,donnees3$id$coord[[i]][2])
+}
+
+Nom_centre <- donnees3$id$nom_centre
+Nombre_creneau <- donnees3$Nombre_creneau
+First_dose <- donnees3$id$first_dose
+
+#jeu de données final :
+covid_firstdose <- tibble(Nom_centre,Nombre_creneau,First_dose,longitude,latitude)
+covid_firstdose <- covid_firstdose %>% filter(First_dose==TRUE) 
+```
+
+ on ajoute la couleur en fonction du nombre :
+```{r}
+covid_firstdose <- covid_firstdose %>% mutate(couleur=case_when(
+  Nombre_creneau < 100 ~ "red",
+  Nombre_creneau >=100 & Nombre_creneau <200 ~ "orange",
+  Nombre_creneau > 200 ~ "green"
+))
+```
+
+
+
+## cartographie
+
+avec le premier jeu de données total:
+
+```{r}
+library(leaflet)
+
+p = colorFactor(palette = c("red","orange","darkgreen"),domain = c("Moins de 100 créneaux","Entre 100 et 200 créneaux","Plus de 200 créneaux"),ordered = T)
+
+map_covid <- leaflet(data=covid) %>% addTiles() %>% 
+  addCircleMarkers(~ longitude, ~ latitude,radius=5, stroke = FALSE,fillOpacity = 0.8, color=~couleur,
+                   popup = ~ paste(Nom_centre," : ", Nombre_creneau, "créneaux ouverts")
+                   )%>% 
+  addLegend("bottomright",  pal = p, 
+           values= c("Moins de 100 créneaux","Entre 100 et 200 créneaux","Plus de 200 créneaux"),
+          title =c("Quantité créneaux proposés"),
+          opacity = 1)
+
+map_covid
+```
+
+
+
+
+Que pour les 1eres doses :
+
+```{r}
+library(leaflet)
+
+p = colorFactor(palette = c("red","orange","darkgreen"),domain = c("Moins de 100 créneaux","Entre 100 et 200 créneaux","Plus de 200 créneaux"),ordered = T)
+
+map_covid <- leaflet(data=covid_firstdose) %>% addTiles() %>% 
+  addCircleMarkers(~ longitude, ~ latitude,radius=5, stroke = FALSE,fillOpacity = 0.8, color=~couleur,
+                   popup = ~ paste(Nom_centre," : ", Nombre_creneau, "créneaux ouverts")
+                   )%>% 
+  addLegend("bottomright",  pal = p, 
+           values= c("Moins de 100 créneaux","Entre 100 et 200 créneaux","Plus de 200 créneaux"),
+          title =c("Quantité créneaux proposés"),
+          opacity = 1)
+
+map_covid
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
