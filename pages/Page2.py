@@ -1,11 +1,10 @@
 from pymongo import MongoClient
 import networkx as nx
-import numpy as np
 import pandas as pd
 from bokeh.io import output_file, show
-from bokeh.models import (BoxZoomTool, Circle, HoverTool,
-                          MultiLine,Plot, Range1d, ResetTool, ColumnDataSource, Column, Div,Row)
-from bokeh.palettes import Blues8, Spectral4
+from bokeh.models import (BoxZoomTool, Circle, HoverTool, 
+                          MultiLine,Plot, Range1d, ResetTool, Column, Div,Row)
+from bokeh.palettes import Blues8
 from bokeh.plotting import from_networkx, figure
 from bokeh.transform import linear_cmap
 
@@ -23,49 +22,34 @@ coll = db["hal_irisa_2021"]
 # On regarde les indexes présents dans la base de données
 print(coll.index_information())
 
-# On va récupérer les 20 auterurs les plus prolifiques
-auteursprolifiques  = coll.aggregate([
-                        {"$unwind": "$authors"},
-                        {"$group": {"_id": {"name": "$authors.name",
-                                        "firstname": "$authors.firstname"},
-                                    "nb_articles": {"$sum": 1}}},
-                        {"$sort": {"nb_articles": -1}},
-                        {"$limit": 20}
-                      ])
-
-listeauteurs = [nom["_id"] for nom in auteursprolifiques]
-
-# créer une liste auteurs associé à ses publications
-# puis garder juste les auteurs de auteursprolifiques
-
-nomauteurs = []
-prenomauteurs = []
-for couple in listeauteurs:
-    nomauteurs.append(couple["name"])
-    prenomauteurs.append(couple["firstname"])
-
 # Sélection des auteurs avec leurs publications
 # La requete ci-dessous est suffisante sur MongoDB mais ne nous permet pas
 # une récupération des valeurs dans la variable titre ...
 # nous utiliserons la requete 2
+
 # auteurspublications = coll.aggregate([
 #                         {"$unwind": "$authors"},
-#                         {"$match":{"authors.name": {"$in" : nomauteurs}, "authors.firstname": {"$in":prenomauteurs}}},
 #                         {"$group": {"_id": {"name": "$authors.name",
 #                                         "firstname": "$authors.firstname"},
-#                                     "titre": {"$push": "$title"}}}
-#                       ])          
+#                                     "titre": {"$push": "$title"},
+#                                     "nbpubli": {$sum: 1}}},
+#                         {"$sort": {"nbpubli": -1}},
+#                         {"$limit": 20}                        
+#                         ])  
 
 auteurspublications = coll.aggregate([
                         {"$unwind": "$authors"},
-                        {"$match":{"authors.name": {"$in" : nomauteurs}, "authors.firstname": {"$in":prenomauteurs}}},
                         {"$group": {"_id": {"name": "$authors.name",
                                         "firstname": "$authors.firstname"},
-                                    "titre": {"$push": "$title"}}},
+                                    "titre": {"$push": "$title"},
+                                    "nbpubli": {"$sum": 1}}},
+                        {"$sort": {"nbpubli": -1}},
+                        {"$limit": 20},
                         {"$group": {"_id": {"name": "$_id.name",
-                                        "firstname": "$_id.firstname",
-                                        "titre" : "$titre"}}}
-                      ])            
+                            "firstname": "$_id.firstname",
+                            "titre" : "$titre",
+                            "nbpubli": "$nbpubli"}}}   
+                        ])        
 
 # Récupération dans listes les noms des auteurs, leur prénom et leurs publications
 auteurs = [nom["_id"] for nom in auteurspublications]
@@ -89,6 +73,9 @@ for source in df.name:
     publisource = list(df.titre[df.name == source])[0]
 
     for cible in df.name:
+        if cible == source:
+            continue
+        
         publicible = list(df.titre[df.name == cible])[0]
         
         cmp = {}
@@ -117,7 +104,7 @@ for source in df.name:
         noeudsource.append(source)
         noeudcible.append(cible)
         nbrepublicommun.append(commun)
-        nbrepubli.append(len(publisource))
+        nbrepubli.append(int(df.nbpubli[df.name == source]))
         
 # dataframe à utiliser pour le network
 datagraphbis = pd.DataFrame({"source": noeudsource, "target": noeudcible, "weight": nbrepublicommun, "node_size": nbrepubli})
@@ -130,7 +117,7 @@ datagraph = datagraphbis[df_mask]
 # Transformation du dataframe en reseau
 G = nx.from_pandas_edgelist(datagraph)
 # visualisation basique
-nx.draw(G, with_labels=True, width=datagraph.weight)
+nx.draw(G, with_labels=True,width=datagraph.weight)
 nx.draw_circular(G, with_labels=True, width=datagraph.weight)
 
 
@@ -178,7 +165,7 @@ maximum_value_color = max(network_graph.node_renderer.data_source.data['adjusted
 network_graph.node_renderer.glyph = Circle(size='adjusted_node_size', fill_color=linear_cmap('adjusted_node_size', Blues8, minimum_value_color, maximum_value_color))
 
 # Taille des liens
-network_graph.edge_renderer.glyph = MultiLine(line_alpha=0.8, line_width='weight')
+network_graph.edge_renderer.glyph = MultiLine(line_alpha=0.8, line_width='weight') 
 
 plot.renderers.append(network_graph)
 
@@ -196,64 +183,16 @@ et votre requête MongoDB devra récupérer pour chacun de ces auteurs la liste 
  dans votre script). </p>
 </br>
 
+<p> Le nombre maximal de publications communes est de 11 et celui minimal est de 1. </p>
+</br>
+
 <p> Retour à la page d'accueil : <a href="../sommaire.html">ici</a></p>
 
 """)
 
 
-layout = Column(div, plot)
+layout = Row(Column(div, plot, width=900))
 output_file("page2.html")
 show(layout)
 
-
-
-
-
-
-
-
-
-
-
-# code MongoDB
-# db.getCollection('hal_irisa_2021').find({"authors.name": {$in : ["Kaim","Canard"]}, 
-# "authors.firstname": {$in:["Guillaume","Sébastien"]}})
-
-# code MongoDB
-# Récupération des 20 auteurs
-#db.getCollection('hal_irisa_2021').aggregate([
- #                       {$unwind: "$authors"},
-  #                      {$group: {_id: {name: "$authors.name",
-   #                                     firstname: "$authors.firstname"},
-    #                                nb_articles: {$sum: 1}}},
-     #                               {$sort: {"nb_articles": -1}},
-      #                  {$limit: 20}
-       #               ])
-
-# db.getCollection('hal_irisa_2021').aggregate([
- #                       {$unwind: "$authors"},
-  #                      {$group: {"_id": {"name": "$authors.name",
-   #                                     "firstname": "$authors.firstname"},
-    #                                "publication": {$push: "$title"}}}
-     #                 ])
-
-
-#db.getCollection('hal_irisa_2021').aggregate([
- #                       {$unwind: "$authors"},
-  #                      {$match: {"authors.name":{$in : ['Lefèvre', 'Pacchierotti', 'Pontonnier', 'Lécuyer', 'Fromont', 'Jézéquel', 'Guillemot', 'Busnel', 'Giordano', 'Pettré', 'Maumet', 'Ferré', 'Bannier', 'Legeai', 'Olivier', 'Dumont', 'Rubino', 'Martin', 'Maillé', 'Siegel']}}},                        {$group: {"_id": {"name": "$authors.name",
-   #                                     "firstname": "$authors.firstname"},
-    #                                "publication": {$push: "$title"}}}])
-
-# Récupération des auteurs + publications
-#db.getCollection('hal_irisa_2021').aggregate([
- #                       {$unwind: "$authors"},
-  #                      {$match: {"authors.name":{$in : ['Lefèvre', 'Pacchierotti', 'Pontonnier', 'Lécuyer', 
-   #                         'Fromont', 'Jézéquel', 'Guillemot', 'Busnel', 'Giordano', 'Pettré', 'Maumet', 'Ferré', 
-    #                        'Bannier', 'Legeai', 'Olivier', 'Dumont', 'Rubino', 'Martin', 'Maillé', 'Siegel']},
-     #                   "authors.firstname":{$in : ['Sébastien', 'Claudio', 'Charles', 'Elisa', 'Jean-Marc', 'Anatole', 
-      #                      'Christine', 'Yann', 'Julien', 'Jean-Christophe', 'Elise', 
-       #                     'Georges', 'Anne-Hélène', 'Camille', 'Fabrice', 'PaoloRobuffo', 
-        #                    'Arnaud', 'Gerardo', 'Valérie', 'Rémi']}}},                        
-         #               {$group: {"_id": {"name": "$authors.name","firstname": "$authors.firstname"},
-          #                          "publication": {$push: "$title"}}}])
 
