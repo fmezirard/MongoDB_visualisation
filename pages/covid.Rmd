@@ -38,14 +38,16 @@ coll <- mongo("dump_Jan2022", url =
 #                                                               $lte: madate_sup}} }
 #                             ])
 # 
-req='[{"$geoNear":{"near": {"type": "Point", "coordinates": [-1.6833, 48.0833]},
-                   "maxDistance": 50000, "spherical": "true", "distanceField": "dist"}},
-      {"$match" :{"visit_motives.slots": {"$gte": {"$date": "2022-01-26T00:00:00Z"}, 
-                                          "$lte": {"$date": "2022-01-29T00:00:00Z"}}}},
-      {"$unwind" : "$visit_motives"},
-      {"$unwind" : "$visit_motives.slots"}]'
-
-donnees <- coll$aggregate(pipeline = req)
+# Version mongolite
+# req='[{"$geoNear":{"near": {"type": "Point", "coordinates": [-1.6833, 48.0833]},
+#                    "maxDistance": 50000, "spherical": "true", "distanceField": "dist"}},
+#       {"$match" :{"visit_motives.slots": {"$gte": {"$date": "2022-01-26T00:00:00Z"}, 
+#                                           "$lte": {"$date": "2022-01-29T00:00:00Z"}}}},
+#       {"$unwind" : "$visit_motives"},
+#       {"$unwind" : "$visit_motives.slots"}]'
+# 
+# donnees <- coll$aggregate(pipeline = req)
+# 
 
 
 ## je groupe par centre de vaccination et je compte le nombre de créneaux ouverts-------------------------------------
