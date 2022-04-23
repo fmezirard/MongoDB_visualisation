@@ -173,14 +173,14 @@ plot.renderers.append(network_graph)
 div = Div(text="""
 <h1> Réseau de publications scientifiques </h1>
 <p> La base publications contient les informations relatives aux publications de scientifiques du laboratoire IRISA 
-pour l’année 2021 (extraites du service HAL). Visualisez les liens entre les auteurs de ces publications, 
-en utilisant un code couleur qui permette de distinguer les auteurs par leurs nombres de publications et 
-en représentant les liens (co-publications) existant entre les auteurs. 
-Le nombre d’auteurs présents dans la base étant très grand, vous vous focaliserez sur les 20 auteurs les plus prolifiques 
-(i.e. qui ont participé à l’écriture du plus grand nombre d’articles) 
-et votre requête MongoDB devra récupérer pour chacun de ces auteurs la liste de ses publications 
-(la suite du traitement qui consiste à calculer le nombre d’articles commun par paire d’auteurs pourra être réalisée 
- dans votre script). </p>
+pour l’année 2021 (extraites du service HAL). 
+On a visualisé les liens entre les auteurs de ces publications, en utilisant un code couleur qui permette de distinguer les auteurs par
+leurs nombres de publications et en représentant les liens (co-publications) existant entre les auteurs. 
+Le nombre d’auteurs présents dans la base étant très grand, on se focalise sur les 20 auteurs les plus prolifiques 
+(i.e. qui ont participé à l’écriture du plus grand nombre d’articles) .
+Notre requête MongoDB récupére pour chacun de ces auteurs la liste de ses publications 
+(la suite du traitement qui consiste à calculer le nombre d’articles commun par paire d’auteurs est réalisée 
+ dans le script python). </p>
 </br>
 
 <p> Le nombre maximal de publications communes est de 11 et celui minimal est de 1. </p>
