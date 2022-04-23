@@ -1,7 +1,7 @@
 
 html, body {
     background: #E4E4E4;
-    color: #8b8e94;
+    color: #5c5f63;
     line-height: 24px;
     font-size: 15px;
     font-family: "Open Sans", Arial, sans-serif;
@@ -14,7 +14,7 @@ html, body {
 header, footer {
     background: #022b07;
     color: #e3e7ee;
-    line-height: 30px;
+    line-height: 40px;
     font-size: 15px;
     font-family: "Open Sans", Arial, sans-serif;
     text-align: center;
@@ -34,7 +34,7 @@ h2 {
   a {
     -webkit-transition: .3s all;
     transition: .3s all;
-    color: #3eff4e;
+    color: #0d7a17;
   }
   
   a:hover, a:focus, a:active {
