@@ -192,7 +192,7 @@ Notre requête MongoDB récupére pour chacun de ces auteurs la liste de ses pub
 Les poids des traits sont les suivants : 11 (x1 : entre Pontonnier et Dumont), 7 (x1 : entre Giordano et Pacchierotti), 5 (x2), 4 (x1), 3 (x1), 2 (x4) ou 1 (x8). </p>
 </br>
 
-<p> Retour à la page d'accueil : <a href="../sommaire.html">ici</a></p>
+<p> Retour à la page d'accueil : <a href="../index.html">ici</a></p>
 
 """)
 

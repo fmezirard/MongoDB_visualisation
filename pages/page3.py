@@ -216,7 +216,7 @@ et qu'il n'y ait pas un point qui cache tous les autres. </p>
 <p> Les deux notes les plus courantes sont celles nommées A ou B. </p>
 </br>
 
-<p> Retour à la page d'accueil : <a href="../sommaire.html">ici</a></p>
+<p> Retour à la page d'accueil : <a href="../index.html">ici</a></p>
 
 """)
 
