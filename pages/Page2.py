@@ -116,15 +116,18 @@ datagraph = datagraphbis[df_mask]
 
 # Transformation du dataframe en reseau
 G = nx.from_pandas_edgelist(datagraph)
+
+for auteur in datagraphbis.source.unique():
+    if auteur not in G.nodes():
+        G.add_node(auteur)
+        
 # visualisation basique
 nx.draw(G, with_labels=True,width=datagraph.weight)
 nx.draw_circular(G, with_labels=True, width=datagraph.weight)
 
-
 # Préparation des données
-auteurunique = datagraph.copy()
+auteurunique = datagraphbis.copy()
 auteurunique.drop_duplicates(subset ="source", keep = 'first', inplace=True)
-
 
 # Dictionnaire auteur et taille de noeud (nbre de publications)
 dico = {}
@@ -186,7 +189,7 @@ Notre requête MongoDB récupére pour chacun de ces auteurs la liste de ses pub
 </br>
 
 <p> Le nombre maximal de publications communes est de 11 et celui minimal est de 1.
-Les poids des traits sont les suivants : 11 (x1 : entre Pontonnier et Dumont), 7 (x1 : entre Giordano et Pacchierotti), 5 (x3), 3 (x1), 2 (x4) ou 1 (x29). </p>
+Les poids des traits sont les suivants : 11 (x1 : entre Pontonnier et Dumont), 7 (x1 : entre Giordano et Pacchierotti), 5 (x2), 4 (x1), 3 (x1), 2 (x4) ou 1 (x8). </p>
 </br>
 
 <p> Retour à la page d'accueil : <a href="../sommaire.html">ici</a></p>
