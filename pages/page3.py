@@ -206,7 +206,7 @@ div = Div(text="""
 Pour ce troisième exercice, vous êtes libres de visualiser les données contenues dans cette base comme bon vous semble. </p>
 </br>
 
-<p> Nous avons récupérer les coordonnées GPS de chaque restaurant avec leur note moyenne ainsi que
+<p> Nous avons récupéré les coordonnées GPS de chaque restaurant avec leur note moyenne ainsi que
 la note moyenne pour chaque note possible (A, B, C, P, Z et Not Yet Graded). </p>
 <p> La taille du point est choisie par l'utilisateur selon la catégorie de la note. 
 La taille pour la moyenne globale a été divisée par 3 pour que l'on puisse voir tous les points
