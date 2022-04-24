@@ -20,7 +20,7 @@ L'utilisateur peut cliquer sur les icones pour obtenir des informations supplém
 Retour à la page d'accueil : 
 [Ici](../sommaire.html)
 
-```{r echo=FALSE}
+```{r include=FALSE}
 ##################  Base de données ####################################
 library(mongolite)
 
@@ -112,7 +112,7 @@ donnees3 <- coll$aggregate(pipeline = req3)
 
 
 
-```{r echo=FALSE}
+```{r include=FALSE}
 ################## Traitement du jeu de données ###########################
 library(tidyverse)
 
@@ -177,10 +177,14 @@ covid_firstdose <- covid_firstdose %>% mutate(couleur=case_when(
 
 
 ### Première carte : tous les créneaux, sans distinction selon le type
+```{r include=FALSE}
+library(leaflet)
+```
+
 
 ```{r echo=FALSE}
 ########## cartographie jeu de données global#################
-library(leaflet)
+
 
 p = colorFactor(palette = c("red","orange","darkgreen"),domain = c("Moins de 100 créneaux","Entre 100 et 200 créneaux","Plus de 200 créneaux"),ordered = T)
 
@@ -200,7 +204,6 @@ map_covid1
 
 ```{r echo=FALSE}
 ########## cartographie bonus le premier: Que pour les 1eres doses#################
-library(leaflet)
 
 p = colorFactor(palette = c("red","orange","darkgreen"),domain = c("Moins de 100 créneaux","Entre 100 et 200 créneaux","Plus de 200 créneaux"),ordered = T)
 
