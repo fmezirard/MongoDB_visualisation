@@ -18,7 +18,7 @@ Ci-dessous deux cartes avec l’icône associée à chaque centre de couleur rou
 L'utilisateur peut cliquer sur les icones pour obtenir des informations supplémentaires
 
 Retour à la page d'accueil : 
-[Ici](../sommaire.html)
+[Ici](../index.html)
 
 ```{r include=FALSE}
 ##################  Base de données ####################################
