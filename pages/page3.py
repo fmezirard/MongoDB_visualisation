@@ -152,7 +152,9 @@ source1 = ColumnDataSource({'x':df['new_lon'],
                             'scoreMissing':df['scoreMissing']})
 
 plot = figure(x_axis_type="mercator", y_axis_type="mercator",
-              active_scroll='wheel_zoom', tools="pan,wheel_zoom,save,reset",
+              plot_width=900, plot_height=700,
+              x_range=(-15000000, 18000000),y_range=(-12000000, 15000000),
+              active_scroll='wheel_zoom',
               title='Cartographie des restaurants de New-York')
 
 tile_provider = get_provider(Vendors.CARTODBPOSITRON)
