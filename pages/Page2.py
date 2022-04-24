@@ -125,6 +125,7 @@ nx.draw_circular(G, with_labels=True, width=datagraph.weight)
 auteurunique = datagraph.copy()
 auteurunique.drop_duplicates(subset ="source", keep = 'first', inplace=True)
 
+
 # Dictionnaire auteur et taille de noeud (nbre de publications)
 dico = {}
 i=0
@@ -133,11 +134,12 @@ for auteur in auteurunique.source:
     i+=1
 
 # Dictionnaire liens et taille du lien (nbre de publications en commun)
-i=0
+
 dicoedges = {}
 for edge in G.edges():
-    dicoedges[edge] = datagraph.weight.values[i]
-    i+=1
+    for ind in datagraph.index:
+        if (datagraph.source[ind] == edge[0] or datagraph.source[ind] == edge[1]) and (datagraph.target[ind] == edge[0] or datagraph.target[ind] == edge[1]): 
+            dicoedges[edge] = datagraph.weight[ind]
     
 # ajouter le dico créé comme attribut du nœud.
 nx.set_node_attributes(G, name='adjusted_node_size', values=dico)
@@ -183,7 +185,8 @@ Notre requête MongoDB récupére pour chacun de ces auteurs la liste de ses pub
  dans le script python). </p>
 </br>
 
-<p> Le nombre maximal de publications communes est de 11 et celui minimal est de 1. </p>
+<p> Le nombre maximal de publications communes est de 11 et celui minimal est de 1.
+Les poids des traits sont les suivants : 11 (x1 : entre Pontonnier et Dumont), 7 (x1 : entre Giordano et Pacchierotti), 5 (x3), 3 (x1), 2 (x4) ou 1 (x29). </p>
 </br>
 
 <p> Retour à la page d'accueil : <a href="../sommaire.html">ici</a></p>
