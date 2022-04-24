@@ -2,6 +2,12 @@
 title: "Centres de vaccination Covid19 en Bretagne"
 output: html_notebook
 ---
+```{r setup, include=FALSE}
+# Option de chunk
+knitr::opts_chunk$set(
+ fig.align="center"
+)
+```
 
 La base doctolib contient des informations (récupérées en janvier 2022) relatives aux centres de vaccination contre la Covid19 en Bretagne.
 Nous avons sélectionné les centres respectant les conditions suivantes :  
